@@ -1,0 +1,13 @@
+# Node.js (Frontend)
+node_modules/
+dist/
+
+# Java (Backend)
+target/
+*.class
+
+# General
+.env
+.DS_Store
+.idea/
+.vscode/
