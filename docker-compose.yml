@@ -1,38 +1,50 @@
-services:
-  backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    container_name: gestione-unisp-backend
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gestione_unisp
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: xcvbn
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-    depends_on:
-      - postgres
-      - redis
+version: "3.9"
 
+services:
   postgres:
     image: postgres:15
-    container_name: gestione-unisp-postgres
+    container_name: gestione-postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: xcvbn
       POSTGRES_DB: gestione_unisp
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
 
   redis:
     image: redis:7
-    container_name: gestione-unisp-redis
+    container_name: gestione-redis
     ports:
       - "6379:6379"
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gestione-backend
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gestione_unisp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: xcvbn
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+    depends_on:
+      - postgres
+      - redis
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: gestione-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
 volumes:
   postgres_data:
