@@ -3,7 +3,7 @@ version: "3.9"
 services:
   postgres:
     image: postgres:15
-    container_name: gestione-postgres
+    container_name: postgres
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: xcvbn
@@ -15,7 +15,7 @@ services:
 
   redis:
     image: redis:7
-    container_name: gestione-redis
+    container_name: redis
     ports:
       - "6379:6379"
 
@@ -23,7 +23,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: gestione-backend
+    container_name: backend
     ports:
       - "8081:8081"
     environment:
@@ -40,7 +40,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: gestione-frontend
+    container_name: frontend
     ports:
       - "5173:5173"
     depends_on:

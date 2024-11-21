@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFormik } from 'formik';
-import * as Yup from 'yup';
+import { mixed, object } from 'yup';
+
 
 const DocumentUpload: React.FC = () => {
     const [files, setFiles] = useState<File[]>([]);
@@ -10,23 +11,27 @@ const DocumentUpload: React.FC = () => {
             permessoSoggiorno: null,
             passaporto: null,
         },
-        validationSchema: Yup.object({
-            permessoSoggiorno: Yup.string()
+        validationSchema: object({
+            permessoSoggiorno: mixed()
                 .required('Permesso di soggiorno obbligatorio')
-                .test('fileType', 'Le fichiers doivent être au format PDF', (value) => {
-                    // Vérifiez ici le type de fichier ou d'autres conditions
-                    return value && value instanceof File; // Assurez-vous que c'est un fichier
+                .test('fileType', 'Il file doit être un PDF', (value) => {
+                    if (!value) return false; // Pas de fichier fourni
+                    if (!(value instanceof File)) return false; // Vérifie que c'est un fichier
+                    return value.type === "application/pdf"; // Vérifie le type MIME
                 }),
-            passaporto: Yup.string()
+            passaporto: mixed()
                 .required('Passaporto obbligatorio')
-                .test('fileType', 'Le fichier doit être au format PDF', (value) => {
-                    return value && value instanceof File; // Assurez-vous que c'est un fichier
+                .test('fileType', 'Il file doit être un PDF', (value) => {
+                    if (!value) return false;
+                    if (!(value instanceof File)) return false;
+                    return value.type === "application/pdf";
                 }),
         }),
         onSubmit: (values) => {
             console.log('Documenti caricati:', values);
         },
     });
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

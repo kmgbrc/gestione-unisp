@@ -49,7 +49,7 @@ const MembriPage: React.FC = () => {
 
     const handleSave = async (membro: Membro) => {
         try {
-            if (membro.id === "number") {
+            if (typeof membro.id === "number") {
                 // Update membro
                 await axios.put(`/api/membri/${membro.id}`, membro);
                 setAlert("Membro aggiornato con successo!");
@@ -165,7 +165,7 @@ const MembroForm: React.FC<MembroFormProps> = ({ membro, onSave }) => {
             cognome: "",
             email: "",
             telefono: "",
-            categoria: "staff",
+            categoria: "passivo",
             stato: "attivo",
             codiceFiscale: "", // Obbligatorio durante la creazione
             permessoSoggiorno: false,
@@ -178,14 +178,17 @@ const MembroForm: React.FC<MembroFormProps> = ({ membro, onSave }) => {
     const isEditing = !!membro; // Determina se il form è in modalità modifica
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
-        const { name, value, type, checked } = e.target;
+        const { name, value, type } = e.target;
+        const checked = (e.target as HTMLInputElement).checked;
+
         setFormData((prevData) => ({
             ...prevData,
             [name]: type === "checkbox" ? checked : value,
         }));
     };
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

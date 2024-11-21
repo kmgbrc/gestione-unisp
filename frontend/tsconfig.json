@@ -4,6 +4,8 @@
     "module": "ESNext",
     "jsx": "react-jsx",
     "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
     "types": ["vite/client", "react", "react-dom"],
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
