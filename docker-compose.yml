@@ -1,31 +1,36 @@
 services:
   postgres:
     image: postgres:15
-    container_name: postgres
+    container_name: postgres-unisp
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: xcvbn
-      POSTGRES_DB: gestione_unisp
+      POSTGRES_DB: gestione_unisp_db
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
-      - "5432:5432"
+      - "5000:5432"
+    restart: unless-stopped
 
   redis:
     image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: backend
+    container_name: backend-unisp
     ports:
-      - "8081:8081"
+      - "8000:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/gestione_unisp
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-unisp:5432/gestione_unisp_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: xcvbn
       SPRING_REDIS_HOST: redis
@@ -38,11 +43,13 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: frontend
+    container_name: frontend-unisp
     ports:
-      - "5173:5173"
+      - "5173:4173"
     depends_on:
       - backend
 
 volumes:
-  postgres_data:
+  db_data:
+  redis_data:
+
