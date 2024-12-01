@@ -1,30 +1,66 @@
-package com.unisp.gestioneunisp.exception;
+package com.unisp.gestione.exceptions;
 
-import org.springframework.http.HttpStatus;
+import com.unisp.gestione.dto.response.ApiResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(LimitReachedException.class)
-    public ResponseEntity<Object> handleLimitReachedException(LimitReachedException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ApiResponse> handleCustomException(CustomException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            ex.getStatus()
+        );
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("message", ex.getMessage());
-        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ApiResponse> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(InvalidStatusException.class)
+    public ResponseEntity<ApiResponse> handleInvalidStatusException(InvalidStatusException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(LimitReachedException.class)
+    public ResponseEntity<ApiResponse> handleLimitReachedException(LimitReachedException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(MissingDocumentException.class)
+    public ResponseEntity<ApiResponse> handleMissingDocumentException(MissingDocumentException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ApiResponse> handlePaymentException(PaymentException ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, ex.getMessage()),
+            HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse> handleGenericException(Exception ex) {
+        return new ResponseEntity<>(
+            new ApiResponse(false, "Si è verificato un errore interno"),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }
